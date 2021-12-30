@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dynamoose": "^1.11.1",
+    "uuid": "^8.3.2"
+  }
 }

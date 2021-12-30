@@ -1,0 +1,18 @@
+bbs:
+  handler: handler.bbs
+  events:
+    - http:
+        path: /
+        method: post
+    - http:
+        path: /
+        method: put
+    - http:
+        path: /
+        method: delete
+    - http:
+        path: /
+        method: get
+    - http:
+        path: /all
+        method: get
