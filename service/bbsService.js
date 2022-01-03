@@ -24,7 +24,17 @@ const create = async event => {
 const update = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            resolve()    
+            const body = JSON.parse(event.body)
+            const {id,regUser,subject,content} = body
+            let result 
+            result = await dao.update({
+                type: 'Notice',
+                id,
+                regUser,
+                subject,
+                content
+            })
+            resolve(result)    
         } catch (error) {
             reject(error)   
         }
@@ -34,7 +44,14 @@ const update = async event => {
 const remove = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            resolve()
+            const body = JSON.parse(event.body)
+            const {id} = body
+            let result 
+            result = await dao.del({
+                type: 'Notice',
+                id
+            })
+            resolve(result)
         } catch (error) {
             reject(error)   
         }
@@ -44,7 +61,13 @@ const remove = async event => {
 const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            resolve()  
+            const id = event.pathParameters.id
+            let result 
+            result = await dao.find({
+                type: 'Notice',
+                id
+            })
+            resolve(result)  
         } catch (error) {
             reject(error)
         }
