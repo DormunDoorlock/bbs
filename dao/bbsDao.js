@@ -1,6 +1,6 @@
 'use strict'
 const {Bbs} = require('../schema')
-
+const {BBS_TYPE_GSI,BBS_REGUSER_GSI,BBS_CREATEDAT_GSI} = process.env
 
 const save = async params => {
     return new Promise(async (resolve,reject)=>{
@@ -21,7 +21,8 @@ const save = async params => {
 const scan = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
-            const query = Bbs.scan().exec()
+            const query = Bbs.query('Notice').eq(id).using(BBS_TYPE_GSI)
+            query.all().exec()
             .then((result) => {
                 resolve(result)
             }).catch((err) => {
