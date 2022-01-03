@@ -78,8 +78,25 @@ const findAll = async event => {
     return new Promise(async (resolve, reject) => {
         try {
             let result 
-            result = await dao.scan()
+            result = await dao.scan({
+                type: 'Notice'
+            })
             resolve(result)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const findName = async event => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const name = event.pathParameters.name
+            let result 
+            result = await dao.findName({
+                regUser: name,
+            })
+            resolve(result)  
         } catch (error) {
             reject(error)
         }
@@ -91,5 +108,6 @@ module.exports = {
     update,
     remove,
     find,
-    findAll 
+    findAll,
+    findName 
 }

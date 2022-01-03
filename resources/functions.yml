@@ -16,3 +16,6 @@ bbs:
     - http:
         path: /all
         method: get
+    - http:
+        path: /board/{name}
+        method: get

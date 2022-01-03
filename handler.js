@@ -18,6 +18,8 @@ module.exports.bbs = async (event) => {
       default:
         if(resource==='/all'){
           result = await service.findAll(event)
+        }else if(resource==='/board/{name}'){
+          result = await service.findName(event)
         }else{
           result = await service.find(event)
         }
