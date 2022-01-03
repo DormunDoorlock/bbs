@@ -28,8 +28,8 @@ custom:
 
 package:
   individually: true
-  exclude:
-    - node_modules/**
+  #exclude:
+  #  - node_modules/**
 
 functions:
   - ${file(resources/functions.yml)}

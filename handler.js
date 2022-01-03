@@ -27,10 +27,13 @@ module.exports.bbs = async (event) => {
       statusCode : 200,
       body: JSON.stringify(result)
     }
+    return res
   } catch (error) {
+    console.log(error)
     const err = {
       statusCode: 400,
       body: JSON.stringify(error)
     }
+    return err
   } 
 };

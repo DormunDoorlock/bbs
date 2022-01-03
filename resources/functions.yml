@@ -11,7 +11,7 @@ bbs:
         path: /
         method: delete
     - http:
-        path: /
+        path: /{id}
         method: get
     - http:
         path: /all

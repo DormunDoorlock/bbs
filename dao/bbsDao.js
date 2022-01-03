@@ -33,7 +33,55 @@ const scan = async params => {
     })
 }
 
+const find = async params => {
+    return new Promise(async (resolve,reject)=>{
+        try {
+            const query = Bbs.get(params)
+            .then((result) => {
+                resolve(result)
+            }).catch((err) => {
+                reject(err)
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const update = async params => {
+    return new Promise(async (resolve,reject)=>{
+        try {
+            const query =Bbs.update(params)
+            .then((result) => {
+                resolve(result)
+            }).catch((err) => {
+                reject(err)
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const del = async params => {
+    return new Promise(async (resolve,reject)=>{
+        try {
+            const query = Bbs.delete(params)
+            .then((result) => {
+                resolve(result)
+            }).catch((err) => {
+                reject(err)
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     save,
-    scan
+    scan,
+    del,
+    update,
+    find
 }
