@@ -1,5 +1,5 @@
 'use strict';
-const {service} = require('./service/index')
+const {service} = require('./service')
 
 module.exports.bbs = async (event) => {
   try {
