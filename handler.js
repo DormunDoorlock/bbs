@@ -16,13 +16,7 @@ module.exports.bbs = async (event) => {
         result = await service.remove(event)
         break
       default:
-        if(resource==='/all'){
-          result = await service.findAll(event)
-        }else if(resource==='/board/{name}'){
-          result = await service.findName(event)
-        }else{
-          result = await service.find(event)
-        }
+        result = await service.find(event)
         break
     }
     const res = {

@@ -11,11 +11,5 @@ bbs:
         path: /
         method: delete
     - http:
-        path: /{id}
-        method: get
-    - http:
-        path: /all
-        method: get
-    - http:
-        path: /board/{name}
+        path: /
         method: get

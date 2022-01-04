@@ -38,7 +38,21 @@ const scan = async params => {
 const find = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
-            const query = Bbs.get(params)
+            const {type,id,subject,regUser,content} = params
+            const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
+            if(id){
+                query.filter('id').eq(id)
+            }
+            if(subject){
+                query.filter('subject').contains(subject)
+            }
+            if(content){
+                query.filter('content').contains(content)
+            }
+            if(regUser){
+                query.filter('regUser').contains(regUser)
+            }
+            query.all().exec()
             .then((result) => {
                 resolve(result)
             }).catch((err) => {
@@ -50,11 +64,11 @@ const find = async params => {
     })
 }
 
-const findName = async params => {
+const findCreatedAt = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
-            const {regUser}=params
-            const query = Bbs.query('regUser').eq(regUser).using(BBS_CREATEDAT_GSI).descending()
+            const {type,createdAt}=params
+            const query = Bbs.query('type').eq(type).filter('createdAt').contains(createdAt)
             query.all().exec()
             .then((result) => {
                 resolve(result)
@@ -70,7 +84,20 @@ const findName = async params => {
 const update = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
-            const query =Bbs.update(params)
+            const {type,id,
+                subject,regUser,content
+            } = params
+            let put ={}
+            if(subject){
+                put.subject=subject
+            }
+            if(regUser){
+                put.regUser=regUser
+            }
+            if(content){
+                put.content=content
+            }
+            Bbs.update({type,id},{ $PUT:put })
             .then((result) => {
                 resolve(result)
             }).catch((err) => {
@@ -103,5 +130,5 @@ module.exports = {
     del,
     update,
     find,
-    findName
+    findCreatedAt
 }

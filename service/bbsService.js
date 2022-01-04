@@ -61,41 +61,40 @@ const remove = async event => {
 const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            const {id} = event.pathParameters
+            const query = event.queryStringParameters || {}
+            const {id,regUser,subject,createdAt,content} = query
+            console.log(id)
             let result 
-            result = await dao.find({
-                type: 'Notice',
-                id
-            })
-            resolve(result)  
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
-
-const findAll = async event => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let result 
-            result = await dao.scan({
-                type: 'Notice'
-            })
-            resolve(result)
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
-
-const findName = async event => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const {name} = event.pathParameters
-            let result 
-            result = await dao.findName({
-                regUser: name,
-            })
+            if(regUser){
+                result = await dao.find({
+                    type: 'Notice',
+                    regUser
+                }) 
+            }else if(subject){
+                result = await dao.find({
+                    type: 'Notice',
+                    subject
+                }) 
+            }else if(createdAt){
+                result = await dao.findCreatedAt({
+                    type: 'Notice',
+                    createdAt
+                }) 
+            }else if(id){
+                result = await dao.find({
+                    type: 'Notice',
+                    id
+                })
+            }else if(content){
+                result = await dao.find({
+                    type: 'Notice',
+                    content
+                })
+            }else{
+                result = await dao.scan({
+                    type: 'Notice'
+                }) 
+            }
             resolve(result)  
         } catch (error) {
             reject(error)
@@ -107,7 +106,5 @@ module.exports = {
     create, 
     update,
     remove,
-    find,
-    findAll,
-    findName 
+    find
 }
