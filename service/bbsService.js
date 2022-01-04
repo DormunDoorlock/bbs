@@ -61,7 +61,7 @@ const remove = async event => {
 const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            const id = event.pathParameters.id
+            const {id} = event.pathParameters
             let result 
             result = await dao.find({
                 type: 'Notice',
@@ -91,7 +91,7 @@ const findAll = async event => {
 const findName = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            const name = event.pathParameters.name
+            const {name} = event.pathParameters
             let result 
             result = await dao.findName({
                 regUser: name,
