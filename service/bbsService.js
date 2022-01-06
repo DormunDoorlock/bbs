@@ -62,40 +62,53 @@ const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
             const query = event.queryStringParameters || {}
-            const {id,regUser,subject,createdAt,content} = query
-            console.log(id)
+            const {id,regUser,subject,createdAt,content,page} = query
             let result 
-            if(regUser){
+            if(regUser || subject || id || content){
+                if(createdAt){
+                    result = await pagination({...query})
+                }
+                else{
                 result = await dao.find({
-                    type: 'Notice',
-                    regUser
-                }) 
-            }else if(subject){
-                result = await dao.find({
-                    type: 'Notice',
-                    subject
-                }) 
+                        type: 'Notice',
+                        regUser,
+                        subject,
+                        id,
+                        content
+                    }) 
+                }
             }else if(createdAt){
                 result = await dao.findCreatedAt({
                     type: 'Notice',
                     createdAt
                 }) 
-            }else if(id){
-                result = await dao.find({
-                    type: 'Notice',
-                    id
-                })
-            }else if(content){
-                result = await dao.find({
-                    type: 'Notice',
-                    content
-                })
             }else{
-                result = await dao.scan({
-                    type: 'Notice'
-                }) 
+                if(page){
+                    result = await pagination({...query})
+                }else{
+                    result = await dao.scan({
+                        type: 'Notice'
+                    }) 
+                }
             }
             resolve(result)  
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const pagination = async params => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result
+            const {id,createdAt} = params
+            result = await dao.pagination({
+                type: 'Notice',
+                id,
+                createdAt
+            })
+            resolve(result)
         } catch (error) {
             reject(error)
         }
@@ -106,5 +119,6 @@ module.exports = {
     create, 
     update,
     remove,
-    find
+    find,
+    pagination
 }

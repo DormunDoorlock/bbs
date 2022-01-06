@@ -38,7 +38,9 @@ const scan = async params => {
 const find = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
-            const {type,id,subject,regUser,content} = params
+            const {type,id,
+                subject,regUser,content
+            } = params
             const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
             if(id){
                 query.filter('id').eq(id)
@@ -97,7 +99,26 @@ const update = async params => {
             if(content){
                 put.content=content
             }
-            Bbs.update({type,id},{ $PUT:put })
+            if(Object.keys(put).length >0){
+                Bbs.update({type,id},{ $PUT:put })
+                .then((result) => {
+                    resolve(result)
+                }).catch((err) => {
+                    reject(err)
+                })
+            } else{
+            resolve()
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const del = async params => {
+    return new Promise(async (resolve,reject)=>{
+        try {
+            Bbs.delete(params)
             .then((result) => {
                 resolve(result)
             }).catch((err) => {
@@ -108,16 +129,62 @@ const update = async params => {
         }
     })
 }
-
-const del = async params => {
-    return new Promise(async (resolve,reject)=>{
+/*
+const pagination = async params => {
+    return new Promise(async (resolve, reject)=> {
         try {
-            const query = Bbs.delete(params)
+            const {type,page} = params
+            const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
+            const response = query.limit((page-1)*5).exec()
+            console.log(response)
+            query.startAt(response.lastKey).limit(5).exec()
             .then((result) => {
                 resolve(result)
             }).catch((err) => {
                 reject(err)
             })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+*/
+const pagination = async params => {
+    return new Promise(async (resolve, reject)=> {
+        try {
+            const {type, limit = 10, createdAt, id} = params
+            // startskey 설정
+            //let startsKey = lastKey? JSON.parse(lastKey):undefined
+            let startsKey={
+                "id": {
+                    "S": id
+                },
+                "createdAt": {
+                    "N": createdAt
+                },
+                "type": {
+                    "S": "Notice"
+                }
+            }
+            const exec = () => {
+                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
+                if (startsKey) {
+                    query.startAt(startsKey)
+                }
+                query.limit(limit).exec()
+                .then((result)=>{
+                    const results= result
+                    if(result.lastKey){
+                        resolve({result: results, lastKey: results.lastKey})
+                    }
+                    else{
+                        resolve({result: results})
+                    }
+                }).catch((err) => {
+                    reject(err)
+                })
+            }
+            exec()
         } catch (error) {
             reject(error)
         }
@@ -130,5 +197,6 @@ module.exports = {
     del,
     update,
     find,
-    findCreatedAt
+    findCreatedAt,
+    pagination
 }
