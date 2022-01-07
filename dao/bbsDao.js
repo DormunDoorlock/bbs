@@ -154,7 +154,6 @@ const pagination = async params => {
         try {
             const {type, limit = 10, createdAt, id} = params
             // startskey 설정
-            //let startsKey = lastKey? JSON.parse(lastKey):undefined
             let startsKey={
                 "id": {
                     "S": id
@@ -191,6 +190,63 @@ const pagination = async params => {
     })
 }
 
+const paginationByRegUser = async params => {
+    return new Promise(async (resolve, reject)=> {
+        try {
+            const {type, limit = 5, createdAt, id, regUser} = params
+            // startskey 설정
+            let startsKey={
+                "id": {
+                    "S": id
+                },
+                "createdAt": {
+                    "N": createdAt
+                },
+                "type": {
+                    "S": "Notice"
+                }
+            }
+            let queryLimit = limit*2
+            let r =[]
+            const exec = () => {
+                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
+                if (startsKey) {
+                    query.startAt(startsKey)
+                }
+                query.filter('regUser').contains(regUser)
+                query.limit(queryLimit).exec()
+                .then((result)=>{
+                    console.log(result)
+                    startsKey=result.lastKey
+                    const results= result
+                    console.log(results)
+                    r.push(...results)
+                    if(r.length<=limit){
+                        if(startsKey){
+                            exec()
+                        }else{
+                            resolve({result: r })
+                        }
+                    }else{
+                        const lastItem = r[limit-1]
+                        const lk = {
+                            id: { S: lastItem.id},
+                            type: { S: lastItem.type},
+                            createdAt: { N: lastItem.createdAt.getTime()}
+                        }
+                        resolve({result: r.slice(0,limit), lastKey: lk})
+                    }
+                }).catch((err) => {
+                    reject(err)
+                })
+            }
+            exec()
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     save,
     scan,
@@ -198,5 +254,6 @@ module.exports = {
     update,
     find,
     findCreatedAt,
-    pagination
+    pagination,
+    paginationByRegUser
 }

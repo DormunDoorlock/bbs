@@ -65,6 +65,10 @@ const find = async event => {
             const {id,regUser,subject,createdAt,content,page} = query
             let result 
             if(regUser || subject || id || content){
+                if(id&&regUser){
+                    result = await paginationByRegUser({...query})
+                    resolve(result)
+                }
                 if(createdAt){
                     result = await pagination({...query})
                 }
@@ -83,13 +87,10 @@ const find = async event => {
                     createdAt
                 }) 
             }else{
-                if(page){
-                    result = await pagination({...query})
-                }else{
-                    result = await dao.scan({
-                        type: 'Notice'
-                    }) 
-                }
+                result = await dao.scan({
+                    type: 'Notice'
+                }) 
+                
             }
             resolve(result)  
         } catch (error) {
@@ -114,11 +115,29 @@ const pagination = async params => {
         }
     })
 }
+const paginationByRegUser = async params => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result
+            const {id,createdAt,regUser} = params
+            result = await dao.paginationByRegUser({
+                type: 'Notice',
+                id,
+                createdAt,
+                regUser
+            })
+            resolve(result)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     create, 
     update,
     remove,
     find,
-    pagination
+    pagination,
+    paginationByRegUser
 }
