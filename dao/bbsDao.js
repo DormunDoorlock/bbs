@@ -117,26 +117,7 @@ const del = async params => {
         }
     })
 }
-/*
-const pagination = async params => {
-    return new Promise(async (resolve, reject)=> {
-        try {
-            const {type,page} = params
-            const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
-            const response = query.limit((page-1)*5).exec()
-            console.log(response)
-            query.startAt(response.lastKey).limit(5).exec()
-            .then((result) => {
-                resolve(result)
-            }).catch((err) => {
-                reject(err)
-            })
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
-*/
+
 const pagination = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
@@ -219,7 +200,7 @@ const paginationByRegUser = async params => {
                             type: { S: lastItem.type},
                             createdAt: { N: lastItem.createdAt.getTime()}
                         }
-                        resolve({result: r.slice(0,limit), lastKey: lk})
+                        resolve({ result: r.slice(0,limit), lastKey: lk})
                     }
                 }).catch((err) => {
                     reject(err)
