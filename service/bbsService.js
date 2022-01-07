@@ -62,10 +62,10 @@ const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
             const query = event.queryStringParameters || {}
-            const {id,regUser,subject,createdAt,content,page} = query
+            const {id,regUser,subject,createdAt,content,order} = query
             let result 
             if(regUser || subject || id || content){
-                if(id&&regUser){
+                if(id && regUser){
                     result = await paginationByRegUser({...query})
                     resolve(result)
                 }
@@ -78,14 +78,10 @@ const find = async event => {
                         regUser,
                         subject,
                         id,
-                        content
+                        content,
+                        order
                     }) 
                 }
-            }else if(createdAt){
-                result = await dao.findCreatedAt({
-                    type: 'Notice',
-                    createdAt
-                }) 
             }else{
                 result = await dao.scan({
                     type: 'Notice'
@@ -137,7 +133,5 @@ module.exports = {
     create, 
     update,
     remove,
-    find,
-    pagination,
-    paginationByRegUser
+    find
 }

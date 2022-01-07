@@ -39,9 +39,14 @@ const find = async params => {
     return new Promise(async (resolve,reject)=>{
         try {
             const {type,id,
-                subject,regUser,content
+                subject,regUser,content,order
             } = params
             const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
+            if(order=="ascending"){
+                query.ascending()
+            }else{
+                query.descending()
+            }
             if(id){
                 query.filter('id').eq(id)
             }
@@ -54,23 +59,6 @@ const find = async params => {
             if(regUser){
                 query.filter('regUser').contains(regUser)
             }
-            query.all().exec()
-            .then((result) => {
-                resolve(result)
-            }).catch((err) => {
-                reject(err)
-            })
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
-
-const findCreatedAt = async params => {
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {type,createdAt}=params
-            const query = Bbs.query('type').eq(type).filter('createdAt').contains(createdAt)
             query.all().exec()
             .then((result) => {
                 resolve(result)
@@ -195,6 +183,7 @@ const paginationByRegUser = async params => {
         try {
             const {type, limit = 5, createdAt, id, regUser} = params
             // startskey 설정
+            let r =[]
             let startsKey={
                 "id": {
                     "S": id
@@ -207,7 +196,6 @@ const paginationByRegUser = async params => {
                 }
             }
             let queryLimit = limit*2
-            let r =[]
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
                 if (startsKey) {
@@ -216,11 +204,8 @@ const paginationByRegUser = async params => {
                 query.filter('regUser').contains(regUser)
                 query.limit(queryLimit).exec()
                 .then((result)=>{
-                    console.log(result)
                     startsKey=result.lastKey
-                    const results= result
-                    console.log(results)
-                    r.push(...results)
+                    r.push(...result)
                     if(r.length<=limit){
                         if(startsKey){
                             exec()
@@ -253,7 +238,6 @@ module.exports = {
     del,
     update,
     find,
-    findCreatedAt,
     pagination,
     paginationByRegUser
 }
