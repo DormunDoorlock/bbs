@@ -122,16 +122,20 @@ const pagination = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
             const {type, limit = 10, createdAt, id,order} = params
-            // startskey 설정
-            let startsKey={
-                "id": {
-                    "S": id
-                },
-                "createdAt": {
-                    "N": createdAt
-                },
-                "type": {
-                    "S": "Notice"
+            let startsKey
+            if(id=="1"){
+                //pass
+            }else{
+                startsKey={
+                    "id": {
+                        "S": id
+                    },
+                    "createdAt": {
+                        "N": createdAt
+                    },
+                    "type": {
+                        "S": "Notice"
+                    }
                 }
             }
             const exec = () => {
@@ -169,17 +173,21 @@ const paginationByRegUser = async params => {
         try {
             const {type, limit = 5, createdAt, id, regUser, order} = params
             console.log(params)
-            // startskey 설정
             let r =[]
-            let startsKey={
-                "id": {
-                    "S": id
-                },
-                "createdAt": {
-                    "N": createdAt
-                },
-                "type": {
-                    "S": "Notice"
+            let startsKey
+            if(id=="1"){
+                //pass
+            }else{
+                startsKey={
+                    "id": {
+                        "S": id
+                    },
+                    "createdAt": {
+                        "N": createdAt
+                    },
+                    "type": {
+                        "S": "Notice"
+                    }
                 }
             }
             let queryLimit = limit*2
@@ -188,16 +196,17 @@ const paginationByRegUser = async params => {
                 if (startsKey) {
                     query.startAt(startsKey)
                 }
+                query.filter('regUser').contains(regUser)
                 if(order=="ascending"){
                     query.ascending()
                 }else{
                     query.descending()
                 }
-                query.filter('regUser').contains(regUser)
                 query.limit(queryLimit).exec()
                 .then((result)=>{
                     startsKey=result.lastKey
                     r.push(...result)
+                    console.log(result)
                     if(r.length<=limit){
                         if(startsKey){
                             exec()
