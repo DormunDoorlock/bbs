@@ -121,7 +121,7 @@ const del = async params => {
 const pagination = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
-            const {type, limit = 10, createdAt, id} = params
+            const {type, limit = 10, createdAt, id,order} = params
             // startskey 설정
             let startsKey={
                 "id": {
@@ -135,9 +135,14 @@ const pagination = async params => {
                 }
             }
             const exec = () => {
-                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
+                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
                 if (startsKey) {
                     query.startAt(startsKey)
+                }
+                if(order=="ascending"){
+                    query.ascending()
+                }else{
+                    query.descending()
                 }
                 query.limit(limit).exec()
                 .then((result)=>{
@@ -162,7 +167,8 @@ const pagination = async params => {
 const paginationByRegUser = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
-            const {type, limit = 5, createdAt, id, regUser} = params
+            const {type, limit = 5, createdAt, id, regUser, order} = params
+            console.log(params)
             // startskey 설정
             let r =[]
             let startsKey={
@@ -178,9 +184,14 @@ const paginationByRegUser = async params => {
             }
             let queryLimit = limit*2
             const exec = () => {
-                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI).descending()
+                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
                 if (startsKey) {
                     query.startAt(startsKey)
+                }
+                if(order=="ascending"){
+                    query.ascending()
+                }else{
+                    query.descending()
                 }
                 query.filter('regUser').contains(regUser)
                 query.limit(queryLimit).exec()

@@ -100,11 +100,12 @@ const pagination = async params => {
     return new Promise(async (resolve, reject) => {
         try {
             let result
-            const {id,createdAt} = params
+            const {id,createdAt,order} = params
             result = await dao.pagination({
                 type: 'Notice',
                 id,
-                createdAt
+                createdAt,
+                order
             })
             resolve(result)
         } catch (error) {
@@ -117,12 +118,13 @@ const paginationByRegUser = async params => {
     return new Promise(async (resolve, reject) => {
         try {
             let result
-            const {id,createdAt,regUser} = params
+            const {id,createdAt,regUser,order} = params
             result = await dao.paginationByRegUser({
                 type: 'Notice',
                 id,
                 createdAt,
-                regUser
+                regUser,
+                order
             })
             resolve(result)
         } catch (error) {
