@@ -1,6 +1,7 @@
 'use strict';
 const {dao} = require('../dao')
 const { v4: uuidv4 } = require('uuid')
+
 const create = async event => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -61,12 +62,33 @@ const remove = async event => {
 const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
-            const id = event.pathParameters.id
+            const query = event.queryStringParameters || {}
+            const {id,regUser,subject,createdAt,content,order} = query
             let result 
-            result = await dao.find({
-                type: 'Notice',
-                id
-            })
+            if(regUser || subject || id || content){
+                if(id && regUser){
+                    result = await paginationByRegUser({...query})
+                    resolve(result)
+                }
+                if(createdAt){
+                    result = await pagination({...query})
+                }
+                else{
+                result = await dao.find({
+                        type: 'Notice',
+                        regUser,
+                        subject,
+                        id,
+                        content,
+                        order
+                    }) 
+                }
+            }else{
+                result = await dao.scan({
+                    type: 'Notice'
+                }) 
+                
+            }
             resolve(result)  
         } catch (error) {
             reject(error)
@@ -74,11 +96,36 @@ const find = async event => {
     })
 }
 
-const findAll = async event => {
+const pagination = async params => {
     return new Promise(async (resolve, reject) => {
         try {
-            let result 
-            result = await dao.scan()
+            let result
+            const {id,createdAt,order} = params
+            result = await dao.pagination({
+                type: 'Notice',
+                id,
+                createdAt,
+                order
+            })
+            resolve(result)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const paginationByRegUser = async params => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result
+            const {id,createdAt,regUser,order} = params
+            result = await dao.paginationByRegUser({
+                type: 'Notice',
+                id,
+                createdAt,
+                regUser,
+                order
+            })
             resolve(result)
         } catch (error) {
             reject(error)
@@ -90,6 +137,5 @@ module.exports = {
     create, 
     update,
     remove,
-    find,
-    findAll 
+    find
 }

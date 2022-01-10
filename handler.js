@@ -1,5 +1,5 @@
 'use strict';
-const {service} = require('./service/index')
+const {service} = require('./service')
 
 module.exports.bbs = async (event) => {
   try {
@@ -16,11 +16,7 @@ module.exports.bbs = async (event) => {
         result = await service.remove(event)
         break
       default:
-        if(resource==='/all'){
-          result = await service.findAll(event)
-        }else{
-          result = await service.find(event)
-        }
+        result = await service.find(event)
         break
     }
     const res = {
