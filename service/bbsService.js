@@ -63,17 +63,13 @@ const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
             const query = event.queryStringParameters || {}
-            const {id,regUser,subject,createdAt,content,order} = query
+            const {id, regUser, subject, createdAt, content, order} = query
             let result 
             if(regUser || subject || id || content){
-                if(id && regUser){
+                if(regUser){
                     result = await paginationByRegUser({...query})
                     resolve(result)
-                }
-                if(createdAt){
-                    result = await pagination({...query})
-                }
-                else{
+                } else{
                 result = await dao.find({
                         type: 'Notice',
                         regUser,
@@ -83,11 +79,8 @@ const find = async event => {
                         order
                     }) 
                 }
-            }else{
-                result = await dao.scan({
-                    type: 'Notice'
-                }) 
-                
+            } else{
+                result = await pagination({...query})
             }
             resolve(result)  
         } catch (error) {
@@ -100,11 +93,10 @@ const pagination = async params => {
     return new Promise(async (resolve, reject) => {
         try {
             let result
-            const {id,createdAt,order} = params
+            const {lastKey,order} = params
             result = await dao.pagination({
                 type: 'Notice',
-                id,
-                createdAt,
+                lastKey,
                 order
             })
             resolve(result)
@@ -118,11 +110,10 @@ const paginationByRegUser = async params => {
     return new Promise(async (resolve, reject) => {
         try {
             let result
-            const {id,createdAt,regUser,order} = params
+            const {regUser,order,lastKey} = params
             result = await dao.paginationByRegUser({
                 type: 'Notice',
-                id,
-                createdAt,
+                lastKey,
                 regUser,
                 order
             })

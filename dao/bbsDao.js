@@ -121,23 +121,8 @@ const del = async params => {
 const pagination = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
-            const {type, limit = 10, createdAt, id,order} = params
-            let startsKey
-            if(id=="1"){
-                //pass
-            }else{
-                startsKey={
-                    "id": {
-                        "S": id
-                    },
-                    "createdAt": {
-                        "N": createdAt
-                    },
-                    "type": {
-                        "S": "Notice"
-                    }
-                }
-            }
+            const {type, limit = 10, lastKey, order} = params
+            let startsKey = lastKey? JSON.parse(base64decode(lastKey)):undefined
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
                 if (startsKey) {
@@ -152,7 +137,7 @@ const pagination = async params => {
                 .then((result)=>{
                     const results= result
                     if(result.lastKey){
-                        resolve({result: results, lastKey: results.lastKey})
+                        resolve({result: results, lastKey: base64encode(JSON.stringify(results.lastKey))})
                     }
                     else{
                         resolve({result: results})
@@ -171,25 +156,10 @@ const pagination = async params => {
 const paginationByRegUser = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
-            const {type, limit = 5, createdAt, id, regUser, order} = params
+            const {type, limit = 5, lastKey, regUser, order} = params
             console.log(params)
             let r =[]
-            let startsKey
-            if(id=="1"){
-                //pass
-            }else{
-                startsKey={
-                    "id": {
-                        "S": id
-                    },
-                    "createdAt": {
-                        "N": createdAt
-                    },
-                    "type": {
-                        "S": "Notice"
-                    }
-                }
-            }
+            let startsKey = lastKey? JSON.parse(base64decode(lastKey)):undefined
             let queryLimit = limit*2
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
@@ -215,11 +185,11 @@ const paginationByRegUser = async params => {
                         }
                     }else{
                         const lastItem = r[limit-1]
-                        const lk = {
+                        const lk = base64encode(JSON.stringify({
                             id: { S: lastItem.id},
                             type: { S: lastItem.type},
-                            createdAt: { N: lastItem.createdAt.getTime()}
-                        }
+                            createdAt: { N: lastItem.createdAt.getTime().toString()}
+                        }))
                         resolve({ result: r.slice(0,limit), lastKey: lk})
                     }
                 }).catch((err) => {
@@ -231,6 +201,14 @@ const paginationByRegUser = async params => {
             reject(error)
         }
     })
+}
+
+const base64encode = plaintext => {
+    return Buffer.from(plaintext, 'utf8').toString('base64')
+}
+
+const base64decode = base64text => {
+    return Buffer.from(base64text, 'base64').toString('utf8')
 }
 
 module.exports = {
