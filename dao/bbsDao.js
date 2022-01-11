@@ -42,21 +42,21 @@ const find = async params => {
                 subject,regUser,content,order
             } = params
             const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
-            if(order=="ascending"){
+            if(order=="ascending") {
                 query.ascending()
-            }else{
+            } else {
                 query.descending()
             }
-            if(id){
+            if(id) {
                 query.filter('id').eq(id)
             }
-            if(subject){
+            if(subject) {
                 query.filter('subject').contains(subject)
             }
-            if(content){
+            if(content) {
                 query.filter('content').contains(content)
             }
-            if(regUser){
+            if(regUser) {
                 query.filter('regUser').contains(regUser)
             }
             query.all().exec()
@@ -78,23 +78,23 @@ const update = async params => {
                 subject,regUser,content
             } = params
             let put ={}
-            if(subject){
+            if(subject) {
                 put.subject=subject
             }
-            if(regUser){
+            if(regUser) {
                 put.regUser=regUser
             }
-            if(content){
+            if(content) {
                 put.content=content
             }
-            if(Object.keys(put).length >0){
+            if(Object.keys(put).length >0) {
                 Bbs.update({type,id},{ $PUT:put })
                 .then((result) => {
                     resolve(result)
                 }).catch((err) => {
                     reject(err)
                 })
-            } else{
+            } else {
             resolve()
             }
         } catch (error) {
@@ -128,17 +128,17 @@ const pagination = async params => {
                 if(startsKey) {
                     query.startAt(startsKey)
                 }
-                if(order == "ascending"){
+                if(order == "ascending") {
                     query.ascending()
-                } else{
+                } else {
                     query.descending()
                 }
                 query.limit(limit).exec()
                 .then((result) => {
                     const results= result
-                    if(result.lastKey){
+                    if(result.lastKey) {
                         resolve({result: results, lastKey: base64encode(JSON.stringify(results.lastKey))})
-                    } else{
+                    } else {
                         resolve({result: results})
                     }
                 }).catch((err) => {
@@ -158,6 +158,7 @@ const paginationByRegUser = async params => {
             const {type, limit = 5, lastKey, regUser, order} = params
             let r = []
             let startsKey = lastKey? JSON.parse(base64decode(lastKey)):undefined
+            console.log(startsKey)
             let queryLimit = limit*2
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
@@ -165,30 +166,29 @@ const paginationByRegUser = async params => {
                     query.startAt(startsKey)
                 }
                 query.filter('regUser').contains(regUser)
-                if(order == "ascending"){
+                if(order == "ascending") {
                     query.ascending()
-                }else{
+                } else {
                     query.descending()
                 }
                 query.limit(queryLimit).exec()
                 .then((result) => {
                     startsKey = result.lastKey
                     r.push(...result)
-                    console.log(result)
-                    if(r.length <= limit){
-                        if(startsKey){
+                    if(r.length <= limit) {
+                        if(startsKey) {
                             exec()
-                        }else{
-                            resolve({result : r })
+                        } else {
+                            resolve({ result : r })
                         }
-                    }else{
+                    } else {
                         const lastItem = r[limit-1]
                         const lk = base64encode(JSON.stringify({
-                            id: { S : lastItem.id},
-                            type: { S : lastItem.type},
-                            createdAt: { N : lastItem.createdAt.getTime().toString()}
+                            id: { S : lastItem.id },
+                            type: { S : lastItem.type },
+                            createdAt: { N : lastItem.createdAt.getTime().toString() }
                         }))
-                        resolve({ result: r.slice(0,limit), lastKey: lk})
+                        resolve({ result: r.slice(0, limit), lastKey: lk })
                     }
                 }).catch((err) => {
                     reject(err)

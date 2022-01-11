@@ -66,10 +66,10 @@ const find = async event => {
             const {id, regUser, subject, content, order} = query
             let result 
             if(regUser || subject || id || content){
-                if(regUser){
+                if(regUser) {
                     result = await paginationByRegUser({...query})
                     resolve(result)
-                } else{
+                } else {
                 result = await dao.find({
                         type: 'Notice',
                         regUser,
