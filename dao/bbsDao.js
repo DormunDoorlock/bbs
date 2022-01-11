@@ -125,21 +125,20 @@ const pagination = async params => {
             let startsKey = lastKey? JSON.parse(base64decode(lastKey)):undefined
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
-                if (startsKey) {
+                if(startsKey) {
                     query.startAt(startsKey)
                 }
-                if(order=="ascending"){
+                if(order == "ascending"){
                     query.ascending()
-                }else{
+                } else{
                     query.descending()
                 }
                 query.limit(limit).exec()
-                .then((result)=>{
+                .then((result) => {
                     const results= result
                     if(result.lastKey){
                         resolve({result: results, lastKey: base64encode(JSON.stringify(results.lastKey))})
-                    }
-                    else{
+                    } else{
                         resolve({result: results})
                     }
                 }).catch((err) => {
@@ -157,38 +156,37 @@ const paginationByRegUser = async params => {
     return new Promise(async (resolve, reject)=> {
         try {
             const {type, limit = 5, lastKey, regUser, order} = params
-            console.log(params)
-            let r =[]
+            let r = []
             let startsKey = lastKey? JSON.parse(base64decode(lastKey)):undefined
             let queryLimit = limit*2
             const exec = () => {
                 const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
-                if (startsKey) {
+                if(startsKey) {
                     query.startAt(startsKey)
                 }
                 query.filter('regUser').contains(regUser)
-                if(order=="ascending"){
+                if(order == "ascending"){
                     query.ascending()
                 }else{
                     query.descending()
                 }
                 query.limit(queryLimit).exec()
-                .then((result)=>{
-                    startsKey=result.lastKey
+                .then((result) => {
+                    startsKey = result.lastKey
                     r.push(...result)
                     console.log(result)
-                    if(r.length<=limit){
+                    if(r.length <= limit){
                         if(startsKey){
                             exec()
                         }else{
-                            resolve({result: r })
+                            resolve({result : r })
                         }
                     }else{
                         const lastItem = r[limit-1]
                         const lk = base64encode(JSON.stringify({
-                            id: { S: lastItem.id},
-                            type: { S: lastItem.type},
-                            createdAt: { N: lastItem.createdAt.getTime().toString()}
+                            id: { S : lastItem.id},
+                            type: { S : lastItem.type},
+                            createdAt: { N : lastItem.createdAt.getTime().toString()}
                         }))
                         resolve({ result: r.slice(0,limit), lastKey: lk})
                     }

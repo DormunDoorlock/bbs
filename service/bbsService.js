@@ -63,7 +63,7 @@ const find = async event => {
     return new Promise(async (resolve, reject) => {
         try {
             const query = event.queryStringParameters || {}
-            const {id, regUser, subject, createdAt, content, order} = query
+            const {id, regUser, subject, content, order} = query
             let result 
             if(regUser || subject || id || content){
                 if(regUser){
