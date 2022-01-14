@@ -1,15 +1,63 @@
 bbs:
   handler: handler.bbs
+  layers:
+    - ${self:custom.commonLayer}
   events:
     - http:
         path: /
         method: post
+        documentation:
+            summary: "Board 게시물 추가"
+            description: |
+                Board Service에 사용.
+                게시물 추가.
+            tags:
+                - "User"
+            requestBody:
+                description: "요청시 body 객체"
+            requestModels:
+                "application/json" : SaveBoard
+            methodResponses:
+                - statusCode: "200"
+                  responseModels: 
+                    "application/json": Board
     - http:
         path: /
         method: put
+        documentation:
+            summary: "Board 게시물 수정"
+            description: |
+                Board Service에 사용.
+                게시물 수정.
+            tags:
+                - "User"
+            requestBody:
+                description: "요청시 body 객체"
+            requestModels:
+                "application/json" : ModifyBoard
+            methodResponses:
+                - statusCode: "200"
+                  responseModels: 
+                    "application/json": Board
     - http:
         path: /
         method: delete
     - http:
         path: /
         method: get
+        documentation:
+            summary: "Board 게시물 조회"
+            description: |
+                Board Service에 사용.
+                게시물 조회.
+            tags:
+                - "User"
+            queryParams:
+                - name: ""
+                  description: ""
+                - name: ""
+                  description: ""
+            methodResponses:
+                - statusCode: "200"
+                  responseModels: 
+                    "application/json": BoardList

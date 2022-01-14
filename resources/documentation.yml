@@ -1,0 +1,76 @@
+api:
+  info:
+    version: "1.0.0"
+    title: "BoardService REST API"
+    description: "BoardService REST API"
+tags:
+  -
+    name: "User"
+    description: "일반 사용자가 사용"
+models:
+  -
+    name: "SaveBoard"
+    description: "게시물 등록 요청 모델"
+    contentType: "application/json"
+    schema:
+      type: "object"
+      properties:
+        regUser:
+          type: "string"
+          description: "Board 게시물 작성자."
+        subject:
+          type: "string"
+          description: "Board 게시물 제목."
+        content:
+          type: "string"
+          description: "Board 게시물 내용."
+  -
+    name: "ModifyBoard"
+    description: "게시물 수정 요청 모델"
+    contentType: "application/json"
+    schema:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "수정 Board 게시물 id."
+        regUser:
+          type: "string"
+          description: "수정 Board 게시물 작성자."
+        subject:
+          type: "string"
+          description: "수정 Board 게시물 제목."
+        content:
+          type: "string"
+          description: "수정 Board 게시물 내용."
+    required:
+      - 'id'
+  -
+    name: "Board"
+    description: "게시물 정보 모델"
+    contentType: "application/json"
+    schema:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          description: "Board 게시물 타입. 디폴트값으로, Notice"
+        id:
+          type: "string"
+          description: "Board 게시물 id."
+        createdAt:
+          type: "integer"
+          description: "Board 게시물 작성일자."
+        regUser:
+          type: "string"
+          description: "Board 게시물 작성자"
+        subject:
+          type: "string"
+          description: "Board 게시물 제목"
+        content:
+          type: "string"
+          description: "Board 게시물 내용"
+
+
+
+

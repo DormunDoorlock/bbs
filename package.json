@@ -6,11 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DormunDoorlock/bbs.git"
+  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "dynamoose": "^1.11.1",
-    "uuid": "^8.3.2"
+  "bugs": {
+    "url": "https://github.com/DormunDoorlock/bbs/issues"
+  },
+  "homepage": "https://github.com/DormunDoorlock/bbs#readme",
+  "devDependencies": {
+    "serverless-aws-documentation": "^1.1.0"
   }
 }

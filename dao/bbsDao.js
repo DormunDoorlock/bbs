@@ -161,7 +161,6 @@ const paginationByRegUser = async params => {
             console.log(startsKey)
             let queryLimit = limit*2
             const exec = () => {
-                const query = Bbs.query('type').eq(type).using(BBS_TYPE_GSI)
                 if(startsKey) {
                     query.startAt(startsKey)
                 }

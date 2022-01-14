@@ -13,6 +13,7 @@ provider:
   environment:
     STAGE: ${opt:stage, 'dev'}
     TZ: Asia/Seoul
+    NODE_PATH: './:/opt/node_modules'
     REGION: ${self:provider.region}
     BBS_TABLE: ${self:custom.bbsTableName}
     BBS_TYPE_GSI: ${self:custom.bbsTypeGsi}
@@ -21,6 +22,8 @@ provider:
 
 custom:
   stage: ${opt:stage, 'dev'}
+  commonLayer: ${cf:bbs-layer-${self:custom.stage}.CommonLayerExport}
+  documentation: ${file(resources/documentation.yml)}
   bbsTableName: ${self:custom.stage}-bbs
   bbsTypeGsi: typeGsi
   bbsRegUserGsi: regUserGsi
@@ -28,8 +31,6 @@ custom:
 
 package:
   individually: true
-  #exclude:
-  #  - node_modules/**
 
 functions:
   - ${file(resources/functions.yml)}
@@ -41,6 +42,9 @@ resources:
  # - ${file(../../resources/gatewayResponse.yml)}
   # confs dynamodb table setting
   - ${file(resources/dynamodb.yml)}
+
+plugins:
+  - serverless-aws-documentation
 
 
 
