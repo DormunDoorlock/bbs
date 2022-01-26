@@ -22,6 +22,7 @@ provider:
 
 custom:
   stage: ${opt:stage, 'dev'}
+  authorizer: aws_iam
   commonLayer: ${cf:bbs-layer-${self:custom.stage}.CommonLayerExport}
   documentation: ${file(resources/documentation.yml)}
   bbsTableName: ${self:custom.stage}-bbs
@@ -37,14 +38,13 @@ functions:
 
 resources:
   # query, body parameter validator setting
- # - ${file(../../resources/validator.yml)}
-  # gateway response setting
- # - ${file(../../resources/gatewayResponse.yml)}
+  - ${file(resources/validator.yml)}
   # confs dynamodb table setting
   - ${file(resources/dynamodb.yml)}
 
 plugins:
   - serverless-aws-documentation
+  - serverless-reqvalidator-plugin
 
 
 

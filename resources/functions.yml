@@ -6,58 +6,95 @@ bbs:
     - http:
         path: /
         method: post
+        cors: true
+        authorizer: ${self:custom.authorizer}
+        reqValidatorName: 'bodyValidator'
         documentation:
-            summary: "Board 게시물 추가"
-            description: |
-                Board Service에 사용.
-                게시물 추가.
-            tags:
-                - "User"
-            requestBody:
-                description: "요청시 body 객체"
-            requestModels:
-                "application/json" : SaveBoard
-            methodResponses:
-                - statusCode: "200"
-                  responseModels: 
-                    "application/json": Board
+          summary: "Board 게시물 추가"
+          description: |
+              Board Service에 사용.
+              게시물 추가.
+          tags:
+              - "User"
+          requestBody:
+              description: "요청시 body 객체"
+          requestModels:
+              "application/json" : SaveBoard
+          methodResponses:
+              - statusCode: "200"
+                responseModels: 
+                  "application/json": Board
     - http:
         path: /
         method: put
+        cors: true
+        authorizer: ${self:custom.authorizer}
+        reqValidatorName: 'bodyValidator'
         documentation:
-            summary: "Board 게시물 수정"
-            description: |
-                Board Service에 사용.
-                게시물 수정.
-            tags:
-                - "User"
-            requestBody:
-                description: "요청시 body 객체"
-            requestModels:
-                "application/json" : ModifyBoard
-            methodResponses:
-                - statusCode: "200"
-                  responseModels: 
-                    "application/json": Board
+          summary: "Board 게시물 수정"
+          description: |
+              Board Service에 사용.
+              게시물 수정.
+          tags:
+              - "User"
+          requestBody:
+              description: "요청시 body 객체"
+          requestModels:
+              "application/json" : ModifyBoard
+          methodResponses:
+              - statusCode: "200"
+                responseModels: 
+                  "application/json": Board
     - http:
         path: /
         method: delete
+        cors: true
+        authorizer: ${self:custom.authorizer}
+        reqValidatorName: 'bodyValidator'
+        documentation:
+          summary: "Board 게시물 삭제"
+          description: |
+              Board Service에 사용.
+              게시물 삭제.
+          tags:
+              - "User"
+          requestBody:
+              description: "요청시 body 객체"
+          requestModels:
+              "application/json" : DeleteBoard
+          methodResponses:
+              - statusCode: "200"
+                responseModels: 
+                  "application/json": DeleteBoardResult
     - http:
         path: /
         method: get
+        cors: true
+        authorizer: ${self:custom.authorizer}
+        reqValidatorName: 'queryValidator'
         documentation:
-            summary: "Board 게시물 조회"
-            description: |
-                Board Service에 사용.
-                게시물 조회.
-            tags:
-                - "User"
-            queryParams:
-                - name: ""
-                  description: ""
-                - name: ""
-                  description: ""
-            methodResponses:
-                - statusCode: "200"
-                  responseModels: 
-                    "application/json": BoardList
+          summary: "Board 게시물 조회"
+          description: |
+              Board Service에 사용.
+              게시물 조회.
+          tags:
+              - "User"
+          queryParams:
+              - name: "id"
+                description: "조회하려는 Board 게시물 id."
+              - name: "order"
+                description: "오름차순: ascending 내림차순: descending"
+              - name: "lastKey"
+                description: |
+                  다음 페이지의 결과 조회시 startKey 설정, 이전 페이지 결과에서 lastKey 존재시 그대로 전달.
+                  전체 조회 및 regUser를 통한 조회일 경우.
+              - name: "regUser"
+                description: "조회하려는 Board 게시물 작성자"
+              - name: "subject"
+                description: "조회하려는 Board 게시물 제목"
+              - name: "content"
+                description: "조회하려는 Board 게시물 내용" 
+          methodResponses:
+              - statusCode: "200"
+                responseModels: 
+                  "application/json": BoardList

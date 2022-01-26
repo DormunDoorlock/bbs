@@ -1,6 +1,9 @@
 'use strict';
 const {service} = require('./service')
-
+let headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Credentials': true
+}
 module.exports.bbs = async (event) => {
   try {
     const { resource, httpMethod } = event
@@ -21,6 +24,7 @@ module.exports.bbs = async (event) => {
     }
     const res = {
       statusCode : 200,
+      headers,
       body: JSON.stringify(result)
     }
     return res

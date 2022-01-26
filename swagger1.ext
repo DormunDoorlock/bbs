@@ -1,0 +1,293 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "BoardService REST API",
+    "version" : "1.0.0",
+    "title" : "dev-bbs"
+  },
+  "host" : "zmp90065s5.execute-api.ap-northeast-2.amazonaws.com",
+  "basePath" : "/dev",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "Board 게시물 조회",
+        "description" : "Board Service에 사용.\n게시물 조회.\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "regUser",
+          "in" : "query",
+          "description" : "조회하려는 Board 게시물 작성자",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "content",
+          "in" : "query",
+          "description" : "조회하려는 Board 게시물 내용",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "order",
+          "in" : "query",
+          "description" : "오름차순: ascending 내림차순: descending",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "lastKey",
+          "in" : "query",
+          "description" : "다음 페이지의 결과 조회시 startKey 설정, 이전 페이지 결과에서 lastKey 존재시 그대로 전달.\n전체 조회 및 regUser를 통한 조회일 경우.\n",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "subject",
+          "in" : "query",
+          "description" : "조회하려는 Board 게시물 제목",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "조회하려는 Board 게시물 id.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/BoardList"
+            }
+          }
+        },
+        "security" : [ {
+          "sigv4" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Board 게시물 추가",
+        "description" : "Board Service에 사용.\n게시물 추가.\n",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "SaveBoard",
+          "description" : "요청시 body 객체",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/SaveBoard"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/Board"
+            }
+          }
+        },
+        "security" : [ {
+          "sigv4" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "User" ],
+        "summary" : "Board 게시물 수정",
+        "description" : "Board Service에 사용.\n게시물 수정.\n",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "ModifyBoard",
+          "description" : "요청시 body 객체",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ModifyBoard"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/Board"
+            }
+          }
+        },
+        "security" : [ {
+          "sigv4" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "User" ],
+        "summary" : "Board 게시물 삭제",
+        "description" : "Board Service에 사용.\n게시물 삭제.\n",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "DeleteBoard",
+          "description" : "요청시 body 객체",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/DeleteBoard"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/DeleteBoardResult"
+            }
+          }
+        },
+        "security" : [ {
+          "sigv4" : [ ]
+        } ]
+      },
+      "options" : {
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "sigv4" : {
+      "type" : "apiKey",
+      "name" : "Authorization",
+      "in" : "header",
+      "x-amazon-apigateway-authtype" : "awsSigv4"
+    }
+  },
+  "definitions" : {
+    "Board" : {
+      "type" : "object",
+      "properties" : {
+        "createdAt" : {
+          "type" : "integer",
+          "description" : "Board 게시물 작성일자."
+        },
+        "subject" : {
+          "type" : "string",
+          "description" : "Board 게시물 제목"
+        },
+        "id" : {
+          "type" : "string",
+          "description" : "Board 게시물 id."
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "Board 게시물 타입. 디폴트값으로, Notice"
+        },
+        "regUser" : {
+          "type" : "string",
+          "description" : "Board 게시물 작성자명"
+        },
+        "content" : {
+          "type" : "string",
+          "description" : "Board 게시물 내용"
+        }
+      },
+      "description" : "게시물 정보 모델"
+    },
+    "BoardList" : {
+      "type" : "object",
+      "properties" : {
+        "lastKey" : {
+          "type" : "string",
+          "description" : "다음페이지 조회 용 key."
+        },
+        "results" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Board"
+          }
+        }
+      },
+      "description" : " BoardList 조회 모델"
+    },
+    "ModifyBoard" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "subject" : {
+          "type" : "string",
+          "description" : "Board 게시물 수정하려는 제목."
+        },
+        "id" : {
+          "type" : "string",
+          "description" : "수정 Board 게시물 id."
+        },
+        "regUser" : {
+          "type" : "string",
+          "description" : "Board 게시물 수정하려는 작성자명."
+        },
+        "content" : {
+          "type" : "string",
+          "description" : "Board 게시물 수정하려는 내용."
+        }
+      },
+      "description" : "게시물 수정 요청 모델"
+    },
+    "SaveBoard" : {
+      "type" : "object",
+      "required" : [ "content", "regUser", "subject" ],
+      "properties" : {
+        "subject" : {
+          "type" : "string",
+          "description" : "Board 게시물 제목."
+        },
+        "regUser" : {
+          "type" : "string",
+          "description" : "Board 게시물 작성자명."
+        },
+        "content" : {
+          "type" : "string",
+          "description" : "Board 게시물 내용."
+        }
+      },
+      "description" : "게시물 등록 요청 모델"
+    },
+    "DeleteBoard" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "삭제 Board 게시물 id."
+        }
+      },
+      "description" : "게시물 삭제 요청 모델"
+    },
+    "DeleteBoardResult" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "삭제 Board 게시물 id."
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "삭제 Board 게시물 타입. 디폴트값으로, Notice"
+        }
+      },
+      "description" : "게시물 정보 모델"
+    }
+  }
+}
